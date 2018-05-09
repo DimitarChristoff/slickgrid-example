@@ -72,7 +72,7 @@ const columns = [
         field: 'type',
         maxWidth: 120,
     },
-    {id: 'counterparty', name: 'Counterparty', field: 'counterparty', minWidth: 200, maxWidth: 200, cssClass: 'zb-editable', editor: Editors.Text, sortable},
+    {id: 'counterparty', name: 'Counterparty', field: 'counterparty', minWidth: 200, maxWidth: 200, cssClass: 'slick-editable', editor: Editors.Text, sortable},
     {id: 'currency',
         name: 'GBP-nnn',
         field: 'currency',
@@ -108,7 +108,7 @@ const columns = [
         name: 'Amount',
         field: 'amount',
         headerCssClass: 'amount',
-        cssClass: 'amount zb-editable',
+        cssClass: 'amount slick-editable',
         formatter: amountFormatter,
         editor: Editors.Text,
         minWidth: 100,
@@ -132,8 +132,9 @@ const columns = [
         field: 'paymentDate',
         minWidth: 100,
         maxWidth: 100,
-        cssClass: 'zb-editable amount',
+        cssClass: 'slick-editable amount',
         headerCssClass: 'amount',
+        //todo: fix date picker as it goes off-screen
         editor: Editors.Date,
         options: {
             date: {
@@ -149,7 +150,7 @@ const columns = [
 ];
 
 // fake data
-const data = dv.setItems(makeArray(300, id => {
+dv.setItems(makeArray(300, id => {
     const currency = _.sample(['USD','AUD','CAD','EUR','JPY','CHF']);
     const data = {
         id,
@@ -190,18 +191,19 @@ class Filter extends React.Component {
 // main!
 class Home extends React.Component {
 
-    constructor(props){
-        super(props)
-        this.handleResize = this.handleResize.bind(this)
-        this.rates = Object.keys(rates)
-        this.historic = this.rates.reduce((acc, cur) => {
-            acc[cur] = [rates[cur]]
-            return acc
-        }, {})
+    rates = Object.keys(rates)
+
+    historic = this.rates.reduce((acc, cur) => {
+        acc[cur] = [rates[cur]]
+        return acc
+    }, {})
+
+    handleResize = () => {
+        this.gridInstance.setColumns(columns)
     }
 
-    handleResize(){
-        this.gridInstance.setColumns(columns)
+    state = {
+        editing: null
     }
 
     componentDidMount(){
@@ -219,10 +221,16 @@ class Home extends React.Component {
         grid.onHeaderRowCellRendered.subscribe((e, {node, column}) => {
             if (['_checkbox_selector', 'historic', 'health'].indexOf(column.id) === -1){
                 ReactDOM.render(<Filter columnId={column.id} columnFilters={columnFilters} dv={dv} />, node);
-                node.classList.add('zb-editable');
+                node.classList.add('slick-editable');
             }
             else if (column.id === 'health') {
                 ReactDOM.render(<input className="range" defaultValue={healthValue} type="range" onChange={e => changeFilter(e.target.value)} />, node)
+            }
+            else {
+                node.classList.add('slick-uneditable');
+            }
+            if (column.id === '_checkbox_selector'){
+                node.innerHTML = '<i class="fa fa-filter" />';
             }
         });
 
@@ -245,6 +253,12 @@ class Home extends React.Component {
             grid.updateRowCount();
             grid.render();
         });
+
+        grid.onBeforeEditCell.subscribe((e, {item}) => {
+            this.setState({editing: item});
+        });
+
+        grid.onBeforeCellEditorDestroy.subscribe(() => this.setState({editing: null}));
 
         grid.onCellChange.subscribe((e, {item}) => {
             dv.updateItem(item.id, item)
@@ -288,6 +302,9 @@ class Home extends React.Component {
         this.historic[currency].length > 15 && this.historic[currency].unshift()
         let hasUpdates = false
         dv.getItems().forEach(item => {
+            if (this.state.editing && item.id === this.state.editing.id)
+                return;
+
             if (item.currency === currency){
                 item.direction = price > item.price ? 'up' : 'down';
                 item.price = price;
