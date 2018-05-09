@@ -40,8 +40,10 @@ const historicSyncFormatter = (r, c, value) => {
     <SparklinesLine style={style} />
     <SparklinesReferenceLine />
     <SparklinesSpots />
-  </Sparklines>, dummy);
-  return dummy.innerHTML
+  </Sparklines>, dummy)
+  const html = dummy.innerHTML
+  ReactDOM.unmountComponentAtNode(dummy)
+  return html
 }
 
 const historicFormatter = (node, row, data) => {
