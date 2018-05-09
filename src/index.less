@@ -1,0 +1,382 @@
+@import '~bulma/css/bulma.css';
+@import '~slickgrid-es6/dist/slick.grid.variables.less';
+@import '~slickgrid-es6/dist/slick.grid.less';
+@import '~font-awesome/less/font-awesome.less';
+@import '~flatpickr/dist/flatpickr.min.css';
+@import '~flag-icon-css/css/flag-icon.min.css';
+
+@grid-border-color: #D6D7D6;
+@grid-border-style: solid;
+
+//@grid-header-background: url('../images/header-columns-bg.gif') repeat-x center bottom;
+@grid-header-background: rgb(247, 247, 245);
+
+@grid-cell-color: rgb(255, 255, 255);
+@grid-cell-selected-color: darken(@grid-cell-color, 5%);
+
+@cell-padding-top: 9px;
+@cell-padding-bottom: 9px;
+@cell-padding-right: 10px;
+@cell-padding-left: 10px;
+
+#myGrid {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  font-size: 14px;
+
+  .zb-editable {
+    border-color: @grid-border-color;
+    box-shadow: -1px 0 0 @grid-border-color;
+  }
+
+}
+
+body, html {
+  height: 100%;
+  overflow: hidden;
+  & > div {
+    height: 100%;
+    align-content: stretch;
+    display: flex;
+    flex-direction: column;
+    position:relative;
+  }
+}
+
+body div[data-reactroot], body > div {
+  display: flex;
+  align-content: stretch;
+  flex-direction: column;
+  .container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+  }
+
+}
+
+/*
+ * IMPORTANT:
+ * In order to preserve the uniform grid appearance, all cell styles need to have padding, margin and border sizes.
+ * No built-in (selected, editable, highlight, flashing, invalid, loading, :focus) or user-specified CSS
+ * classes should alter those!
+ */
+
+.slickgrid-container {
+  div.slick-cell {
+    progress {
+      width: 100%;
+      display: block;
+      /* Important Thing */
+      -webkit-appearance: none;
+      border: none;
+      &::-webkit-progress-value {
+        background: green;
+      }
+      &::-webkit-progress-bar {
+        background: transparent;
+      }
+      &.danger::-webkit-progress-value {
+        background: darkred;
+      }
+    }
+
+    div.green {
+      color: green;
+    }
+    div.red {
+      color: darkred;
+    }
+    div.up, div.down {
+      position: relative;
+    }
+    div.up:before {
+      .fa();
+      .fa-fw();
+      color: dodgerblue;
+      position: absolute;
+      left: 0;
+      content: @fa-var-chevron-up;
+    }
+
+    div.down:before {
+      .fa();
+      .fa-fw();
+      color: orange;
+      position: absolute;
+      left: 0;
+      content: @fa-var-chevron-down;
+    }
+    &.full-size {
+      padding: 0;
+    }
+  }
+
+
+  .slick-header-columns,
+  .slick-header-column {
+    background: @grid-header-background;
+    // background-color: #EBECEE;
+  }
+
+  .slick-header-columns {
+    border-bottom: 1px solid @grid-border-color;
+    //background: linear-gradient(rgba(0,0,0,0) 60%, rgba(0,0,0,.1));
+    .slick-sort-indicator {
+      .fa();
+      margin: 0;
+      margin-left: .5rem;
+      padding: 0;
+      background: none !important;
+      &:after {
+        content: @fa-var-sort;
+      }
+      &.slick-sort-indicator-asc:after {
+        content: @fa-var-sort-asc;
+      }
+      &.slick-sort-indicator-desc:after {
+        content: @fa-var-sort-desc;
+      }
+    }
+  }
+
+  .slick-header-column {
+    //border-right: 1px solid @grid-border-color;
+    //border-bottom: 1px solid @grid-border-color;
+    &.ui-state-default {
+      border: 0;
+      padding-top: @cell-padding-top;
+      padding-bottom: @cell-padding-bottom;
+      padding-left: @cell-padding-left;
+      padding-right: @cell-padding-right;
+    }
+  }
+
+  .slick-headerrow, .slick-headerrow-columns {
+    border: none;
+  }
+
+  .slick-headerrow-column {
+
+
+    &.ui-state-default {
+      border: 0;
+      padding-top: @cell-padding-top;
+      padding-bottom: @cell-padding-bottom;
+      padding-left: @cell-padding-left;
+      padding-right: @cell-padding-right;
+    }
+  }
+
+
+  .slick-header-column:hover {
+    background: darken(@grid-header-background, 2%);
+  }
+
+  .slick-header-column-active {
+    background: darken(@grid-header-background, 5%) !important;
+  }
+
+  .slick-headerrow {
+    background: @grid-header-background;
+    border-bottom: 1px solid @grid-border-color;
+  }
+
+  .slick-headerrow-column {
+    background: #fafafa;
+    border-bottom: 0;
+    input.editor-text {
+      box-sizing: border-box;
+      font-size: 13.3px;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      border: 0;
+      margin: 0;
+      background: transparent;
+      padding: @cell-padding-top @cell-padding-right @cell-padding-bottom @cell-padding-left;
+    }
+    padding: 0;
+  }
+
+  .grid-canvas {
+    background: white;
+  }
+
+  .slick-viewport, .slick-header {
+    box-sizing: border-box;
+    border: none;
+  }
+
+  .slick-row {
+    background: @grid-cell-color;
+    border: 0;
+    line-height: 14px;
+    &.buy {
+      background: #f9f9f9;
+    }
+
+    .slick-cell {
+      background-color: transparent;
+
+      padding-top: @cell-padding-top;
+      padding-bottom: @cell-padding-bottom;
+      padding-left: @cell-padding-left;
+      padding-right: @cell-padding-right;
+      box-sizing: border-box;
+      border-color: transparent;
+      border-bottom-color: @grid-border-color;
+
+      &:last-child {
+        //border-right-color: @grid-border-color;
+      }
+      &.selected {
+        background-color: @grid-cell-selected-color;
+      }
+
+      &.active {
+        outline: #3785b6;
+        background: @grid-cell-selected-color;
+
+        input.editor-text {
+          font-size: 1em;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          border: 0;
+          margin: 0;
+          background: transparent;
+          padding: @cell-padding-top @cell-padding-right @cell-padding-bottom @cell-padding-left;
+        }
+
+      }
+    }
+
+    &.odd .slick-cell {
+      background: inherit;
+
+      // make sure we override the regular background color:
+      &.selected {
+        background-color: @grid-cell-selected-color;
+      }
+
+      &.active {
+        background: @grid-cell-selected-color;
+      }
+    }
+
+    &.active-row .slick-cell {
+      background-color: rgb(226, 255, 253);
+
+      // make sure we override the regular background color:
+      &.selected {
+        background-color: @grid-cell-selected-color;
+      }
+    }
+
+    &.active-row.odd .slick-cell {
+      background-color: rgb(226, 255, 253);
+
+      // make sure we override the regular background color:
+      &.selected {
+        background-color: green; // beige
+      }
+    }
+
+    &.loading {
+      opacity: 0.5;
+    }
+  }
+
+  .slick-group {
+    border-bottom: 2px solid silver;
+  }
+
+
+  .slick-group-totals {
+    color: gray;
+    background: white;
+  }
+
+  .slick-sortable-placeholder {
+    background: silver !important;
+  }
+
+  @-moz-keyframes slickgrid-invalid-hilite {
+    from {
+      box-shadow: 0 0 6px red;
+    }
+    to {
+      box-shadow: none;
+    }
+  }
+
+  @-webkit-keyframes slickgrid-invalid-hilite {
+    from {
+      box-shadow: 0 0 6px red;
+    }
+    to {
+      box-shadow: none;
+    }
+  }
+
+  // ----------------------------------------------
+  // Excel-like header
+  // ----------------------------------------------
+
+  .slick-cell > .editor-select {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: auto;
+    top: 0;
+    bottom: 0;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .slick-range-decorator {
+    z-index: 100;
+    pointer-events: none;
+    background: transparent;
+    border: none;
+    outline: black;
+  }
+}
+
+
+div.slick-cell.amount,  div.slick-header-column.amount {
+  & input.editor-text {
+    text-align: right;
+  }
+  text-align: right;
+}
+
+
+input.range {
+  height:2px;
+  background: @grid-border-color;
+  appearance: none;
+  display: block;
+  margin-top: 8px;
+  width: 100%;
+  -webkit-appearance:none;
+  outline: none;
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    background: white;
+    position: relative;
+    border: 2px solid @grid-border-color;
+    z-index: 3;
+    cursor: pointer;
+  }
+}
