@@ -153,6 +153,19 @@ module.exports = {
               compact: true,
             },
           },
+          {
+              test: /\.less$/,
+              use: [{
+                  loader: require.resolve('style-loader')
+              }, {
+                  loader: require.resolve('css-loader')
+              }, {
+                  loader: require.resolve('less-loader'), options: {
+                      strictMath: true,
+                      noIeCompat: true
+                  }
+              }]
+          },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
