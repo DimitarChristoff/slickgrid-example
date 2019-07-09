@@ -99,6 +99,20 @@ body div[data-reactroot], body > div {
       }
     }
 
+    div.health:after {
+      .fa();
+      .fa-fw();
+      content: @fa-var-star;
+      color: grey;
+    }
+    div.health.high:after {
+      content: "@{fa-var-star} @{fa-var-star} @{fa-var-star}";
+      color: green;
+    }
+    div.health.medium:after {
+      content: "@{fa-var-star} @{fa-var-star}";
+      color: orange;
+    }
     div.green {
       color: green;
     }
